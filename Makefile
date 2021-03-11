@@ -7,7 +7,7 @@ build:
 
 test:
 	@echo "-- testing internal modules"
-	go test ./internal...
+	go test -race ./internal...
 
 lint:
 	@echo "-- linter running"

@@ -1,17 +1,17 @@
-language: go
-
-go:
-  - 1.16
-  - tip
-
-before_install:
-  - go get -t -v ./...
-
-script:
-  - go test -race -coverprofile=coverage.txt -covermode=atomic
-
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+#language: go
+#
+#go:
+#  - 1.16
+#  - tip
+#
+#before_install:
+#  - go get -t -v ./...
+#
+#script:
+#  - go test -race -coverprofile=coverage.txt -covermode=atomic
+#
+#after_success:
+#  - bash <(curl -s https://codecov.io/bash)
 
 
 #language: go
@@ -26,21 +26,21 @@ after_success:
 #  - go test -v -covermode=count -coverprofile=coverage.out ./...
 #  - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
 
-#name: Test and coverage
-#
-#on: [push, pull_request]
-#
-#jobs:
-#  build:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#        with:
-#          fetch-depth: 2
-#      - uses: actions/setup-go@v2
-#        with:
-#          go-version: '1.16'
-#      - name: Run coverage
-#        run: go test -race -coverprofile=coverage.txt -covermode=atomic
-#      - name: Upload coverage to Codecov
-#        run: bash <(curl -s https://codecov.io/bash)
+name: Test and coverage
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.16'
+      - name: Run coverage
+        run: go test -race -coverprofile=coverage.txt -covermode=atomic
+      - name: Upload coverage to Codecov
+        run: bash <(curl -s https://codecov.io/bash)

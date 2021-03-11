@@ -1,4 +1,4 @@
-package letter_switcher
+package ltrswitcher
 
 import "testing"
 

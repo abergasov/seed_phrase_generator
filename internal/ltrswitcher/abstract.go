@@ -1,4 +1,4 @@
-package letter_switcher
+package ltrswitcher
 
 type ILetterSwitcher interface {
 	RotateWords([]string) []string

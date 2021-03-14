@@ -41,15 +41,15 @@ func (b *TextParser) ParseTexts(dir string) []string {
 
 func (b *TextParser) GetPossibleTexts() []ParserResponse {
 	result := make([]ParserResponse, 0, len(b.validTexts))
-	for i, v := range b.preparedBooks {
+	for i := range b.preparedBooks {
 		result = append(result, ParserResponse{
 			FileID: i,
 			File:   b.validTexts[i],
-			Title:  v.Description.TitleInfo.BookTitle,
+			Title:  b.preparedBooks[i].Description.TitleInfo.BookTitle,
 			Author: fmt.Sprintf("%s %s %s",
-				v.Description.TitleInfo.Author.FirstName,
-				v.Description.TitleInfo.Author.MiddleName,
-				v.Description.TitleInfo.Author.LastName,
+				b.preparedBooks[i].Description.TitleInfo.Author.FirstName,
+				b.preparedBooks[i].Description.TitleInfo.Author.MiddleName,
+				b.preparedBooks[i].Description.TitleInfo.Author.LastName,
 			),
 		})
 	}
@@ -70,15 +70,13 @@ func (b *TextParser) canBookBeUsed(dir, file string) (*FB2, error) {
 	err = d.Decode(&book)
 
 	if err != nil {
-		// logger.Error("can't parse file", err, zap.String("file", file))
 		return nil, err
 	}
 	return &book, nil
 }
 
 func (b *TextParser) charsetReader(c string, i io.Reader) (r io.Reader, e error) {
-	switch c {
-	case "windows-1251":
+	if c == "windows-1251" {
 		r = utils.DecodeWin1251(i)
 	}
 	return

@@ -23,9 +23,7 @@ type AuthorType struct {
 	FirstName  string `xml:"first-name"`
 	MiddleName string `xml:"middle-name"`
 	LastName   string `xml:"last-name"`
-	//Nickname   string `xml:"nickname"`
-	HomePage string `xml:"home-page"`
-	//Email      string `xml:"email"`
+	HomePage   string `xml:"home-page"`
 }
 
 type Description struct {

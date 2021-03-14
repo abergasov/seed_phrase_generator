@@ -34,3 +34,15 @@ func TestPositionInArray(t *testing.T) {
 		}
 	}
 }
+
+func TestCutText(t *testing.T) {
+	table := map[string]string{
+		"12":  "12",
+		"123": "123...",
+	}
+	for s, e := range table {
+		if r := CutText(s, 3); r != e {
+			t.Fatalf("expect %s got %s", e, r)
+		}
+	}
+}

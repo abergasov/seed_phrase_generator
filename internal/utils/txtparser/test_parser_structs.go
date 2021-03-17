@@ -10,9 +10,9 @@ type ParserResponse struct {
 }
 
 type Chapter struct {
-	Text     string
-	FullText string
-	Offset   int
+	ChapterTitle string
+	FullText     string
+	Offset       int
 }
 
 type AuthorType struct {
@@ -69,15 +69,15 @@ type Body struct {
 	} `xml:"title"`
 	Section []struct {
 		Text  string `xml:",chardata"`
-		Title []struct {
+		Title struct {
 			Text string `xml:",chardata"`
 			P    string `xml:"p"`
 		} `xml:"title"`
 		Section []struct {
 			Text  string `xml:",chardata"`
 			Title struct {
-				Text string   `xml:",chardata"`
-				P    []string `xml:"p"`
+				Text string `xml:",chardata"`
+				P    string `xml:"p"`
 			} `xml:"title"`
 			P []string `xml:"p"`
 		} `xml:"section"`

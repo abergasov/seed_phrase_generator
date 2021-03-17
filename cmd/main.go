@@ -3,6 +3,9 @@ package main
 import (
 	"os"
 	"seed_phrase_generator/internal/logger"
+	"seed_phrase_generator/internal/seedgenerator"
+	"seed_phrase_generator/internal/utils/ltrswitcher"
+	"seed_phrase_generator/internal/utils/txtparser"
 
 	"go.uber.org/zap"
 )
@@ -23,4 +26,9 @@ func main() {
 	}
 	path += string(os.PathSeparator) + txtDir
 	logger.Info("text storage path", zap.String("path", path))
+
+	gen := seedgenerator.NewSeedGen(path, txtparser.InitParser(), ltrswitcher.NewSwitcher())
+	gen.SelectSrc()
+	gen.SelectNumber()
+	gen.ShowChapters()
 }

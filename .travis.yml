@@ -6,9 +6,13 @@ go:
 before_install:
   - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.24.0
 
+env:
+  - GO111MODULE=on
+
+install: true
+
 script:
   - go get -t -v ./...
-  - go mod vendor
   - go get golang.org/x/tools/cmd/cover
   - go get github.com/mattn/goveralls
   - go test -v -mod=vendor -covermode=count -coverprofile=coverage.out ./...

@@ -22,5 +22,6 @@ script:
   # - go test -v -mod=readonly -covermode=count -coverprofile=coverage.out ./...
   - go test -v -mod=mod -covermode=count -coverprofile=coverage.out ./...
   - go mod vendor
-  - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $CODECOV_TOKEN
+  #- $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $CODECOV_TOKEN
+  - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci
   - make lint

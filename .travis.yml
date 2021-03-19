@@ -11,7 +11,6 @@ script:
   - go mod vendor
   - go get golang.org/x/tools/cmd/cover
   - go get github.com/mattn/goveralls
-  - ls -l
   - go test -v -mod=mod -covermode=count -coverprofile=coverage.out ./...
   - go mod vendor
   - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci

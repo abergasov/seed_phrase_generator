@@ -9,7 +9,7 @@ import (
 	"golang.org/x/text/encoding/charmap"
 )
 
-var r = regexp.MustCompile(`(</?[a-zA-A]+?[^>]*/?>|\[(\d*?)\])*`)
+var r = regexp.MustCompile(`(</?[a-zA]+?[^>]*/?>|\[(\d*?)\])*`)
 
 func ReverseSlice(src []string) []string {
 	result := make([]string, 0, len(src))

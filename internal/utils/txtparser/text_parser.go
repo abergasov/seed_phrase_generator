@@ -1,8 +1,6 @@
 package txtparser
 
 import (
-	"fmt"
-	"io"
 	"io/ioutil"
 	"os"
 	"seed_phrase_generator/internal/logger"
@@ -14,14 +12,14 @@ import (
 )
 
 type TextParser struct {
-	preparedBooks []epub.EpubBook
+	preparedBooks []epub.BookEpub
 	validTexts    []string
 }
 
 func InitParser() *TextParser {
 	return &TextParser{
 		validTexts:    make([]string, 0, 10),
-		preparedBooks: make([]epub.EpubBook, 0, 10),
+		preparedBooks: make([]epub.BookEpub, 0, 10),
 	}
 }
 
@@ -47,48 +45,33 @@ func (b *TextParser) GetPossibleTexts() []ParserResponse {
 			FileID: i,
 			File:   b.validTexts[i],
 			Title:  b.preparedBooks[i].Opf.Metadata.Title[0],
-			Author: fmt.Sprintf("%s",
-				b.preparedBooks[i].Opf.Metadata.Creator[0].Data,
-			),
+			Author: b.preparedBooks[i].Opf.Metadata.Creator[0].Data,
 		})
 	}
 	return result
 }
 
-func (b *TextParser) canBookBeUsed(dir, file string) (*epub.EpubBook, error) {
+func (b *TextParser) canBookBeUsed(dir, file string) (*epub.BookEpub, error) {
 	return epub.NewEpubBook(dir + string(os.PathSeparator) + file)
-}
-
-func (b *TextParser) charsetReader(c string, i io.Reader) (r io.Reader, e error) {
-	if c == "windows-1251" {
-		r = utils.DecodeWin1251(i)
-	}
-	return
 }
 
 func (b *TextParser) GetTextChapters(resp *ParserResponse) []Chapter {
 	result := make([]Chapter, 0)
 	for i := range b.preparedBooks[resp.FileID].Ncx.NavMap.NavPoint {
 		// book
-		for j, c := range b.preparedBooks[resp.FileID].Ncx.NavMap.NavPoint[i].NavPoint {
+		for j := range b.preparedBooks[resp.FileID].Ncx.NavMap.NavPoint[i].NavPoint {
 			// book chapter
 			tmp := Chapter{
-				ChapterTitle: c.NavLabel.Text,
+				ChapterTitle: b.preparedBooks[resp.FileID].Ncx.NavMap.NavPoint[i].NavPoint[j].NavLabel.Text,
 			}
 			paragraphList := make([]string, 0, 5)
-			for _, k := range c.ChapterContent.P {
+			for _, k := range b.preparedBooks[resp.FileID].Ncx.NavMap.NavPoint[i].NavPoint[j].ChapterContent.P {
 				if len(paragraphList) >= 3 {
 					break
 				}
-				txt := strings.TrimSpace(k.Text)
+				txt := utils.CleanString(k.Text)
 				if len(txt) > 0 {
 					paragraphList = append(paragraphList, txt)
-				}
-				for _, e := range k.Em {
-					txt = strings.TrimSpace(e)
-					if len(txt) > 0 {
-						paragraphList = append(paragraphList, txt)
-					}
 				}
 			}
 			tmp.FullText = utils.CutText(strings.Join(paragraphList, "\n"), 200)
@@ -97,4 +80,24 @@ func (b *TextParser) GetTextChapters(resp *ParserResponse) []Chapter {
 		}
 	}
 	return result
+}
+
+func (b *TextParser) GetOffsetData(resp *ParserResponse, offset int) []string {
+	res := make([]string, 0, 1000)
+	for i := range b.preparedBooks[resp.FileID].Ncx.NavMap.NavPoint {
+		// book
+		for j := range b.preparedBooks[resp.FileID].Ncx.NavMap.NavPoint[i].NavPoint {
+			// book chapter
+			if j < offset {
+				continue
+			}
+			for _, k := range b.preparedBooks[resp.FileID].Ncx.NavMap.NavPoint[i].NavPoint[j].ChapterContent.P {
+				txt := utils.CleanString(k.Text)
+				if len(txt) > 0 {
+					res = append(res, txt)
+				}
+			}
+		}
+	}
+	return res
 }

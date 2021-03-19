@@ -21,7 +21,7 @@ type Rootfile struct {
 	Type string `xml:"media-type,attr" json:"type"`
 }
 
-type EpubBook struct {
+type BookEpub struct {
 	Ncx       Ncx       `json:"ncx"`
 	Opf       Opf       `json:"opf"`
 	Container Container `json:"-"`
@@ -30,9 +30,9 @@ type EpubBook struct {
 	fd *zip.ReadCloser
 }
 
-func NewEpubBook(bookFile string) (*EpubBook, error) {
+func NewEpubBook(bookFile string) (*BookEpub, error) {
 	fd, err := zip.OpenReader(bookFile)
-	bk := EpubBook{fd: fd}
+	bk := BookEpub{fd: fd}
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,13 @@ func NewEpubBook(bookFile string) (*EpubBook, error) {
 
 	bk.Mimetype = string(mt)
 	err = bk.readXML("META-INF/container.xml", &bk.Container)
+	if err != nil {
+		return nil, err
+	}
 	err = bk.readXML(bk.Container.Rootfile.Path, &bk.Opf)
+	if err != nil {
+		return nil, err
+	}
 
 	for _, mf := range bk.Opf.Manifest {
 		if mf.ID == bk.Opf.Spine.Toc {
@@ -53,8 +59,8 @@ func NewEpubBook(bookFile string) (*EpubBook, error) {
 		}
 	}
 	for i := range bk.Ncx.NavMap.NavPoint {
-		for j, nc := range bk.Ncx.NavMap.NavPoint[i].NavPoint {
-			data := strings.Split(nc.Content.Src, "#")
+		for j := range bk.Ncx.NavMap.NavPoint[i].NavPoint {
+			data := strings.Split(bk.Ncx.NavMap.NavPoint[i].NavPoint[j].Content.Src, "#")
 			var chC ChapterContent
 			err = bk.readXML(bk.filename(data[0]), &chC)
 			for _, c := range chC.Body.Span.Span {
@@ -69,13 +75,13 @@ func NewEpubBook(bookFile string) (*EpubBook, error) {
 }
 
 // Open open resource file
-func (p *EpubBook) Open(n string) (io.ReadCloser, error) {
+func (p *BookEpub) Open(n string) (io.ReadCloser, error) {
 	return p.open(p.filename(n))
 }
 
 // Files list resource files
-func (p *EpubBook) Files() []string {
-	var fns []string
+func (p *BookEpub) Files() []string {
+	fns := make([]string, 0, len(p.fd.File))
 	for _, f := range p.fd.File {
 		fns = append(fns, f.Name)
 	}
@@ -83,15 +89,15 @@ func (p *EpubBook) Files() []string {
 }
 
 // Close close file reader
-func (p *EpubBook) Close() {
+func (p *BookEpub) Close() {
 	p.fd.Close()
 }
 
-func (p *EpubBook) filename(n string) string {
+func (p *BookEpub) filename(n string) string {
 	return path.Join(path.Dir(p.Container.Rootfile.Path), n)
 }
 
-func (p *EpubBook) readXML(n string, v interface{}) error {
+func (p *BookEpub) readXML(n string, v interface{}) error {
 	fd, err := p.open(n)
 	if err != nil {
 		return err
@@ -101,7 +107,7 @@ func (p *EpubBook) readXML(n string, v interface{}) error {
 	return dec.Decode(v)
 }
 
-func (p *EpubBook) readBytes(n string) ([]byte, error) {
+func (p *BookEpub) readBytes(n string) ([]byte, error) {
 	fd, err := p.open(n)
 	if err != nil {
 		return nil, err
@@ -109,10 +115,9 @@ func (p *EpubBook) readBytes(n string) ([]byte, error) {
 	defer fd.Close()
 
 	return ioutil.ReadAll(fd)
-
 }
 
-func (p *EpubBook) open(n string) (io.ReadCloser, error) {
+func (p *BookEpub) open(n string) (io.ReadCloser, error) {
 	for _, f := range p.fd.File {
 		if f.Name == n {
 			return f.Open()

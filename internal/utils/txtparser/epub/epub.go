@@ -10,12 +10,12 @@ import (
 	"strings"
 )
 
-//Container META-INF/container.xml file
+// Container META-INF/container.xml file
 type Container struct {
 	Rootfile Rootfile `xml:"rootfiles>rootfile" json:"rootfile"`
 }
 
-//Rootfile root file
+// Rootfile root file
 type Rootfile struct {
 	Path string `xml:"full-path,attr" json:"path"`
 	Type string `xml:"media-type,attr" json:"type"`
@@ -68,12 +68,12 @@ func NewEpubBook(bookFile string) (*EpubBook, error) {
 	return &bk, err
 }
 
-//Open open resource file
+// Open open resource file
 func (p *EpubBook) Open(n string) (io.ReadCloser, error) {
 	return p.open(p.filename(n))
 }
 
-//Files list resource files
+// Files list resource files
 func (p *EpubBook) Files() []string {
 	var fns []string
 	for _, f := range p.fd.File {
@@ -82,7 +82,7 @@ func (p *EpubBook) Files() []string {
 	return fns
 }
 
-//Close close file reader
+// Close close file reader
 func (p *EpubBook) Close() {
 	p.fd.Close()
 }

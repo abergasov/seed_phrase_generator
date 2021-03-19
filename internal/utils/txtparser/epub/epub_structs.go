@@ -4,19 +4,19 @@ import (
 	"encoding/xml"
 )
 
-//Ncx OPS/toc.ncx
+// Ncx OPS/toc.ncx
 type NcxL struct {
 	Points []NavPoint `xml:"navMap>navPoint" json:"points"`
 }
 
-//NavPoint nav point
+// NavPoint nav point
 type NavPoint struct {
 	Text    string     `xml:"navLabel>text" json:"text"`
 	Content Content    `xml:"content" json:"content"`
 	Points  []NavPoint `xml:"navPoint" json:"points"`
 }
 
-//Content nav-point content
+// Content nav-point content
 type Content struct {
 	Src string `xml:"src,attr" json:"src"`
 }
@@ -77,7 +77,7 @@ type Opf struct {
 	Spine    Spine      `xml:"spine" json:"spine"`
 }
 
-//Metadata metadata
+// Metadata metadata
 type Metadata struct {
 	Title       []string     `xml:"title" json:"title"`
 	Language    []string     `xml:"language" json:"language"`
@@ -123,7 +123,7 @@ type Metafield struct {
 	Content string `xml:"content,attr" json:"content"`
 }
 
-//Manifest manifest
+// Manifest manifest
 type Manifest struct {
 	ID           string `xml:"id,attr" json:"id"`
 	Href         string `xml:"href,attr" json:"href"`

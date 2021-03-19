@@ -46,3 +46,19 @@ func TestCutText(t *testing.T) {
 		}
 	}
 }
+
+func TestRemoveHtmlTag(t *testing.T) {
+	table := map[string]string{
+		`Hi ...`:                `<b>Hi</b> <script>...</script>`,
+		`foo bold bar ignored`:  `<div><p>foo <b>bold</b> bar </p><div><style>ignored</style>`,
+		`hello here`:            `hello <em>here</em>`,
+		`sample here`:           `sample <em>here</em> [12314]`,
+		`sample new here [1a2]`: `sample new <em>here</em> [1a2]`,
+	}
+	for want, src := range table {
+		res := CleanString(src)
+		if res != want {
+			t.Errorf("got: %v, want: %v", res, want)
+		}
+	}
+}

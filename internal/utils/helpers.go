@@ -2,9 +2,16 @@ package utils
 
 import (
 	"io"
+	"regexp"
+	"sort"
+	"strings"
 
 	"golang.org/x/text/encoding/charmap"
 )
+
+const patternHtml = `(<\/?[a-zA-A]+?[^>]*\/?>|\[(\d*?)\])*`
+
+var r = regexp.MustCompile(patternHtml)
 
 func ReverseSlice(src []string) []string {
 	result := make([]string, 0, len(src))
@@ -35,4 +42,17 @@ func CutText(text string, size int) string {
 		return text
 	}
 	return text[0:size] + "..."
+}
+
+func CleanString(in string) string {
+	groups := r.FindAllString(in, -1)
+	sort.Slice(groups, func(i, j int) bool {
+		return len(groups[i]) > len(groups[j])
+	})
+	for _, group := range groups {
+		if strings.TrimSpace(group) != "" {
+			in = strings.ReplaceAll(in, group, "")
+		}
+	}
+	return strings.TrimSpace(in)
 }

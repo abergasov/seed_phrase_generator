@@ -16,6 +16,7 @@ script:
   - go mod vendor
   - go get golang.org/x/tools/cmd/cover
   - go get github.com/mattn/goveralls
+  - ls -l
   - go test -v -mod=readonly -covermode=count -coverprofile=coverage.out ./...
   - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
   - make lint

@@ -94,7 +94,7 @@ func (p *EpubBook) filename(n string) string {
 func (p *EpubBook) readXML(n string, v interface{}) error {
 	fd, err := p.open(n)
 	if err != nil {
-		return nil
+		return err
 	}
 	defer fd.Close()
 	dec := xml.NewDecoder(fd)
@@ -104,7 +104,7 @@ func (p *EpubBook) readXML(n string, v interface{}) error {
 func (p *EpubBook) readBytes(n string) ([]byte, error) {
 	fd, err := p.open(n)
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 	defer fd.Close()
 

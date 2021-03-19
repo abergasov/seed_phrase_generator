@@ -152,23 +152,19 @@ type SpineItem struct {
 type ChapterSpan struct {
 	Text string `xml:",chardata"`
 	ID   string `xml:"id,attr"`
-	Div  struct {
+	Div  []struct {
 		Text  string `xml:",chardata"`
 		Class string `xml:"class,attr"`
 		P     []struct {
 			Text  string `xml:",chardata"`
 			Class string `xml:"class,attr"`
+			Em    string `xml:"em"`
 		} `xml:"p"`
 	} `xml:"div"`
 	P []struct {
-		Text  string   `xml:",chardata"`
+		Text  string   `xml:",innerxml"`
 		Class string   `xml:"class,attr"`
 		Em    []string `xml:"em"`
-		A     []struct {
-			Text  string `xml:",chardata"`
-			Href  string `xml:"href,attr"`
-			Class string `xml:"class,attr"`
-		} `xml:"a"`
 	} `xml:"p"`
 }
 

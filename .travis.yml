@@ -18,5 +18,5 @@ script:
   - go get github.com/mattn/goveralls
   - ls -l
   - go test -v -mod=readonly -covermode=count -coverprofile=coverage.out ./...
-  - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
+  - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $CODECOV_TOKEN
   - make lint

@@ -83,7 +83,7 @@ func (b *TextParser) GetTextChapters(resp *ParserResponse) []Chapter {
 }
 
 func (b *TextParser) GetOffsetData(resp *ParserResponse, offset int) []string {
-	res := make([]string, 0, 1000)
+	res := make([]string, 0, 4000)
 	for i := range b.preparedBooks[resp.FileID].Ncx.NavMap.NavPoint {
 		// book
 		for j := range b.preparedBooks[resp.FileID].Ncx.NavMap.NavPoint[i].NavPoint {

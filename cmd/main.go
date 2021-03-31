@@ -28,7 +28,14 @@ func main() {
 	logger.Info("text storage path", zap.String("path", path))
 
 	gen := seedgenerator.NewSeedGen(path, txtparser.InitParser(), ltrswitcher.NewSwitcher())
-	gen.SelectSrc()
+	srcBook, err := gen.SelectSrc()
+	if err != nil {
+		logger.Error("error select src book", err)
+	}
 	gen.SelectNumber()
-	gen.ShowChapters()
+	offset, err := gen.ShowChapters(srcBook)
+	if err != nil {
+		logger.Error("error select chapter offset", err)
+	}
+	gen.GenerateSentenceFromChapter(offset)
 }

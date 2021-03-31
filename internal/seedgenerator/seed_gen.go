@@ -13,7 +13,7 @@ import (
 type SeedGen struct {
 	selectedSrcFile *txtparser.ParserResponse
 	userCode        int64
-	chapterStart    *txtparser.Chapter
+	chapterStart    int
 	textDir         string
 	switcher        ltrswitcher.ILetterSwitcher
 	bookParser      txtparser.ITextParser
@@ -29,7 +29,7 @@ func NewSeedGen(textDir string, parser txtparser.ITextParser, switcher ltrswitch
 	return seedGen
 }
 
-func (s *SeedGen) SelectSrc() {
+func (s *SeedGen) SelectSrc() (int, error) {
 	books := s.bookParser.GetPossibleTexts()
 	template := &promptui.SelectTemplates{
 		Label:    "{{ . }}",
@@ -43,9 +43,11 @@ func (s *SeedGen) SelectSrc() {
 {{ "File:" | faint }}	{{ .File }}`,
 	}
 	i, err := s.runSelect(books, template)
-	if err == nil {
-		s.selectedSrcFile = &books[i]
+	if err != nil {
+		return 0, err
 	}
+	s.selectedSrcFile = &books[i]
+	return i, nil
 }
 
 func (s *SeedGen) SelectNumber() {
@@ -79,7 +81,7 @@ func (s *SeedGen) SelectNumber() {
 	}
 }
 
-func (s *SeedGen) ShowChapters() {
+func (s *SeedGen) ShowChapters(src int) (int, error) {
 	if s.selectedSrcFile == nil {
 		logger.Error("can't generate seed phrase", errors.New("src file is not selected"))
 	}
@@ -94,9 +96,16 @@ func (s *SeedGen) ShowChapters() {
 	}
 
 	i, err := s.runSelect(chapters, template)
-	if err == nil {
-		s.chapterStart = &chapters[i]
+	if err != nil {
+		return 0, err
 	}
+	s.chapterStart = i
+	return i, nil
+}
+
+func (s *SeedGen) GenerateSentenceFromChapter(firstChapter int) []string {
+	list := s.bookParser.GetOffsetData(s.selectedSrcFile, firstChapter)
+	return list
 }
 
 func (s *SeedGen) runSelect(list interface{}, tmpl *promptui.SelectTemplates) (int, error) {
